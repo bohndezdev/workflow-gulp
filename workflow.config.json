@@ -1,6 +1,8 @@
 {
   "script_dest": "./dist/js/",
-  "styles_dest": "./dist/styles",
+  "style_dest": "./dist/styles",
   "script_type": "ts",
-  "project_type": "web"
+  "project_type": "web",
+  "watch_dir": "./src/ts/*.ts",
+  "script_bundle_name": "bundle.min.js"
 }

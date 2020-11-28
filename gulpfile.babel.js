@@ -25,7 +25,7 @@ gulp.task('typescript', () => {
   return tsProject
     .src()
     .pipe(tsProject())
-    .js.pipe(gulp.dest('dist'))
+    .js.pipe(gulp.dest(CONFIG.script_dest))
 })
 
 gulp.task("typescript-for-web", gulp.series( () => {
@@ -42,35 +42,37 @@ gulp.task("typescript-for-web", gulp.series( () => {
         extensions: [".ts", ".js"],
       })
       .bundle()
-      .pipe(source("bundle.js"))
+      .pipe(source(CONFIG.script_bundle_name))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(uglify())
-      .pipe(sourcemaps.write("./"))
+      // .pipe(sourcemaps.write("./"))
       .pipe(gulp.dest(CONFIG.script_dest));
   })
 );
 
-gulp.task('babel', () => {
+gulp.task('babel-js', () => {
   return gulp
     .src('./src/js/*.js')
     .pipe(babel({
       presets: ['@babel/env']
     }))
     .pipe(terser())
-    .pipe(concat('scripts-min.js'))
-    .pipe(gulp.dest('./public/js'))
+    .pipe(concat(CONFIG.script_bundle_name))
+    .pipe(gulp.dest(CONFIG.script_dest))
 });
 
-
-
-/*----------  Tasks that will run  ----------*/
-if (CONFIG.project_type == 'web' && CONFIG.script_type === 'ts') {
-  tasksToRun = gulp.series('typescript-for-web')
-}
-
-
-
 gulp.task('default', () => {
-  return gulp.watch('./src/ts/*.ts', tasksToRun)
+  /*----------  For Web   ----------*/
+  if (CONFIG.project_type === 'web' && CONFIG.script_type === 'ts') {
+    return gulp.watch(CONFIG.watch_dir, gulp.series('typescript-for-web'))
+  } else if(CONFIG.project_type === 'web' && CONFIG.script_type === 'js') {
+    return gulp.watch(CONFIG.watch_dir, gulp.series('babel-js'))
+  } else {
+    console.log('==========================================')
+    console.log('You have to try with a valid configuration')
+    console.log('==========================================')
+    return
+  }
+
 })
