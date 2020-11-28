@@ -1,4 +1,4 @@
 import { Person } from './person'
 
 const person = new Person('Uco')
-person.lastNam = 23
+person.lastNam = 24

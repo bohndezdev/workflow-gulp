@@ -32,7 +32,7 @@ gulp.task("typescript-for-web", gulp.series( () => {
     return browserify({
       basedir: ".",
       debug: true,
-      entries: ["src/ts/main.ts"],
+      entries: [CONFIG.script_source_name],
       cache: {},
       packageCache: {},
     })
@@ -53,7 +53,7 @@ gulp.task("typescript-for-web", gulp.series( () => {
 
 gulp.task('babel-js', () => {
   return gulp
-    .src('./src/js/*.js')
+    .src(CONFIG.script_source_name)
     .pipe(babel({
       presets: ['@babel/env']
     }))
