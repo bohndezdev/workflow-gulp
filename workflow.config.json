@@ -1,0 +1,13 @@
+{
+
+  "script_dest": "dist/js/",
+
+
+  "styles_dest": "dist/styles",
+
+
+  "script_type": "ts",
+
+
+  "project_type": "web"
+}
