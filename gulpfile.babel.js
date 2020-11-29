@@ -1,26 +1,30 @@
 import CONFIG from './workflow.config.json';
 
-import  gulp from 'gulp';
-import  babel from 'gulp-babel';
-import  terser from 'gulp-terser';
-import  concat from 'gulp-concat';
-import  ts from 'gulp-typescript';
+import gulp from 'gulp';
+import babel from 'gulp-babel';
+import terser from 'gulp-terser';
+import concat from 'gulp-concat';
+import ts from 'gulp-typescript';
+import rename from 'gulp-rename'
 
 // Para usar typescript
-import  browserify from 'browserify';
-import  source from 'vinyl-source-stream';
-import  tsify from 'tsify';
+import browserify from 'browserify';
+import source from 'vinyl-source-stream';
+import tsify from 'tsify';
 
 // Uglify
-import  uglify from 'gulp-uglify';
-import  sourcemaps from 'gulp-sourcemaps';
-import  buffer from 'vinyl-buffer';
+import uglify from 'gulp-uglify';
+import sourcemaps from 'gulp-sourcemaps';
+import buffer from 'vinyl-buffer';
 
 // css
 import postcss from 'gulp-postcss'
 import cssnano from 'cssnano'
 import autoprefixer from 'autoprefixer'
 
+
+// Sass
+import sass from 'gulp-sass'
 
 const tsProject = ts.createProject('tsconfig.json')
 let tasksToRun;
@@ -70,7 +74,7 @@ gulp.task('babel-js', () => {
     .pipe(gulp.dest(CONFIG.script_dest))
 });
 
-gulp.task('styles', () => {
+gulp.task('styles_css', () => {
   return gulp
     .src(CONFIG.style_source_file)
     .pipe(concat(CONFIG.style_bundle_name))
@@ -78,26 +82,36 @@ gulp.task('styles', () => {
     .pipe(gulp.dest(CONFIG.style_dest))
 })
 
+gulp.task('styles_scss', () => {
+  return gulp
+    .src(CONFIG.style_source_file)
+    .pipe(sass({
+      outputStyle: 'compressed'
+    }))
+    .pipe(postcss(cssPlugins))
+    .pipe(rename(CONFIG.style_bundle_name))
+    .pipe(gulp.dest(CONFIG.style_dest))
+})
+
 gulp.task('default', () => {
-  
-
-
-
-  /*----------  For Web   ----------*/
+  /*----------  With Typescript   ----------*/
   if (CONFIG.project_type === 'web' && CONFIG.script_type === 'ts') {
     gulp.watch(CONFIG.script_source_file, gulp.series('typescript-for-web'))
+    gulp.watch(CONFIG.style_source_file, gulp.series('styles_scss'))
 
-  } else if(CONFIG.project_type === 'web' && CONFIG.script_type === 'js') {
+  }
+  /*----------  With Javascript   ----------*/
+  else if(CONFIG.project_type === 'web' && CONFIG.script_type === 'js') {
     gulp.watch(CONFIG.script_source_file, gulp.series('babel-js'))
+    gulp.watch(CONFIG.style_source_file, gulp.series('styles_scss'))
 
-  } else {
+  }
+  /*----------  Error   ----------*/
+  else {
     console.log('==========================================')
     console.log('You have to try with a valid configuration')
     console.log('==========================================')
     return
 
   }
-
-  gulp.watch(CONFIG.style_source_file, gulp.series('styles'))
-
 })
