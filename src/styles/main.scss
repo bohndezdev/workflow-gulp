@@ -1,9 +1,8 @@
 $color: balck;
 body {
-  color: $color;
   display: flex;
 }
 
-p {
-  color: white;
+p,h1 {
+  color: blue;
 }

@@ -1,6 +1,6 @@
 {
   "project_type": "web",
-  "watch_dir": ["./src/**/*.*"],
+  "watch_dir": ["./dist/*.html"],
 
   "script_type": "ts",
   "script_source_file": "./src/ts/main.ts",

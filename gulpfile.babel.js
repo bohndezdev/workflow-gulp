@@ -22,10 +22,8 @@ import postcss from 'gulp-postcss'
 import cssnano from 'cssnano'
 import autoprefixer from 'autoprefixer'
 
-
 // Sass
 import sass from 'gulp-sass'
-
 
 // Clean css
 import clean from 'gulp-purgecss'
@@ -33,8 +31,12 @@ import clean from 'gulp-purgecss'
 // Image Min
 import imagemin from 'gulp-imagemin'
 
-const tsProject = ts.createProject('tsconfig.json')
-let tasksToRun;
+// Browser sync
+import { init as server, stream, reload } from 'browser-sync'
+
+
+// Variables
+const tsProject  = ts.createProject('tsconfig.json')
 const cssPlugins = [
   cssnano(),
   autoprefixer()
@@ -104,7 +106,7 @@ gulp.task('clean', () => {
   return gulp
     .src(CONFIG.style_dest+'/'+CONFIG.style_bundle_name)
     .pipe(clean({
-      content: ['./dist/*.php']
+      content: ['./dist/*.php', './dist/*.html']
     }))
     .pipe(gulp.dest(CONFIG.style_dest))
 
@@ -121,17 +123,41 @@ gulp.task('imgmin', () => {
     .pipe(gulp.dest('./dist/img'))
 })
 
+
+gulp.task('browsersync', () => {
+  const files = [
+    './dist/css/*.css',
+    './dist/js/*.js',
+    '.dist/*.php'
+  ]
+
+  browsersync.init(files, {
+    proxy: "http://localhost:8080/your-project-directory",
+    notify: false
+  })
+})
+
+gulp.task('views', () => {
+  return gulp.src('./dist/*.html')
+})
+
 gulp.task('default', () => {
+  server({
+    server: './dist'
+  })
+
+  gulp.watch(CONFIG.watch_dir, gulp.series('views')).on('change', reload)
+
   /*----------  With Typescript   ----------*/
   if (CONFIG.project_type === 'web' && CONFIG.script_type === 'ts') {
-    gulp.watch(CONFIG.script_source_file, gulp.series('typescript-for-web'))
-    gulp.watch(CONFIG.style_source_file, gulp.series('styles_scss'))
+    gulp.watch(CONFIG.script_source_file, gulp.series('typescript-for-web')).on('change', reload)
+    gulp.watch(CONFIG.style_source_file, gulp.series('styles_scss')).on('change', reload)
 
   }
   /*----------  With Javascript   ----------*/
   else if(CONFIG.project_type === 'web' && CONFIG.script_type === 'js') {
-    gulp.watch(CONFIG.script_source_file, gulp.series('babel-js'))
-    gulp.watch(CONFIG.style_source_file, gulp.series('styles_scss'))
+    gulp.watch(CONFIG.script_source_file, gulp.series('babel-js')).on('change', reload)
+    gulp.watch(CONFIG.style_source_file, gulp.series('styles_scss')).on('change', reload)
 
   }
   /*----------  Error   ----------*/
