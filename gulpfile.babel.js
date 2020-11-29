@@ -30,6 +30,9 @@ import sass from 'gulp-sass'
 // Clean css
 import clean from 'gulp-purgecss'
 
+// Image Min
+import imagemin from 'gulp-imagemin'
+
 const tsProject = ts.createProject('tsconfig.json')
 let tasksToRun;
 const cssPlugins = [
@@ -105,6 +108,17 @@ gulp.task('clean', () => {
     }))
     .pipe(gulp.dest(CONFIG.style_dest))
 
+})
+
+
+gulp.task('imgmin', () => {
+  return gulp.src('./src/img/*')
+    .pipe(imagemin([
+      imagemin.gifsicle({interlaced: true}),
+      imagemin.mozjpeg({quality: 30, progresive: true}),
+      imagemin.optipng({optimizationLevel: 1})
+    ]))
+    .pipe(gulp.dest('./dist/img'))
 })
 
 gulp.task('default', () => {
