@@ -26,6 +26,10 @@ import autoprefixer from 'autoprefixer'
 // Sass
 import sass from 'gulp-sass'
 
+
+// Clean css
+import clean from 'gulp-purgecss'
+
 const tsProject = ts.createProject('tsconfig.json')
 let tasksToRun;
 const cssPlugins = [
@@ -91,6 +95,16 @@ gulp.task('styles_scss', () => {
     .pipe(postcss(cssPlugins))
     .pipe(rename(CONFIG.style_bundle_name))
     .pipe(gulp.dest(CONFIG.style_dest))
+})
+
+gulp.task('clean', () => {
+  return gulp
+    .src(CONFIG.style_dest+'/'+CONFIG.style_bundle_name)
+    .pipe(clean({
+      content: ['./dist/*.php']
+    }))
+    .pipe(gulp.dest(CONFIG.style_dest))
+
 })
 
 gulp.task('default', () => {

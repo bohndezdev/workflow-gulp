@@ -7,7 +7,7 @@
   "script_bundle_name": "bundle.min.js",
   "script_dest": "./dist/js/",
 
-  "style_source_file": "./src/styles/main.css",
+  "style_source_file": "./src/styles/main.scss",
   "style_bundle_name": "styles.min.css",
   "style_dest": "./dist/css"
 }
